@@ -3,12 +3,15 @@ import './App.css';
 import DepthChart from './components/DepthChart';
 import PlayerForm from './components/PlayerForm';
 import { SPORTS_CONFIG } from './config/sportsConfig';
+import Modal from './components/Modal';
 
 function App() {
   const [depthCharts, setDepthCharts] = useState({
     NFL: {},
     Soccer: {}
   });
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPosition, setSelectedPosition] = useState(null);
 
   const addPlayer = (sport, position, player, spot = null) => {
     console.log('addPlayer called at:', new Date().toISOString(), { sport, position, player, spot });
@@ -53,16 +56,44 @@ function App() {
     });
   };
 
+  const openAddPlayerModal = (position = null) => {
+    console.log("position ---", position)
+    setSelectedPosition(position);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="App">
       <h1>Sports Depth Charts</h1>
-      <PlayerForm
-        sportsConfig={SPORTS_CONFIG}
-        onAddPlayer={addPlayer}
-      />
+      <button
+        className="add-player-button"
+        onClick={() => openAddPlayerModal()}
+      >
+        Add New Player
+      </button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setSelectedPosition(null);
+        }}
+        title={`Add new ${selectedPosition || 'player'}`}>
+        <PlayerForm
+          sportsConfig={SPORTS_CONFIG}
+          initialPosition={selectedPosition}
+          onAddPlayer={(sport, position, player, spot) => {
+            addPlayer(sport, position, player, spot);
+            setIsModalOpen(false);
+            setSelectedPosition(position);
+          }}
+        />
+      </Modal>
+
       <DepthChart
         depthCharts={depthCharts}
         onRemovePlayer={removePlayer}
+        onAddPlayer={openAddPlayerModal}
         sportsConfig={SPORTS_CONFIG}
       />
     </div>

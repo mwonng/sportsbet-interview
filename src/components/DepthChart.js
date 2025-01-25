@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
+import Modal from './Modal';
+import PlayerItem from './PlayerItem'
 
-
-function DepthChart({ depthCharts, onRemovePlayer, sportsConfig }) {
+function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) {
   const [selectedSport, setSelectedSport] = useState('ALL');
   const [selectedPosition, setSelectedPosition] = useState('ALL');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -21,43 +22,49 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig }) {
       );
     }
 
-    const positions = depthCharts[selectedSport];
-    if (!positions) return null;
+    const availablePositions = sportsConfig[selectedSport].positions;
+    if (!availablePositions) return null;
 
     return (
       <div className="bg-white rounded-lg shadow-md p-4">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">{selectedSport}</h2>
-        {Object.entries(positions).map(([position, players]) => {
-          if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {availablePositions.map(position => {
+            if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
-          return (
-            <div key={position} className="mb-4">
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">{position}</h3>
-              <ul className="space-y-2">
-                {players.map((player, index) => (
-                  <li key={player.id} className="flex items-center gap-3 bg-gray-50 p-3 rounded-md">
-                    <span className="font-medium">{player.name}</span>
-                    <button
-                      onClick={() => onRemovePlayer(selectedSport, position, player.id)}
-                      className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
-                    >
-                      Remove
-                    </button>
-                    <button
-                      onClick={() => setSelectedPlayer({ sport: selectedSport, position, ...player })}
-                      className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-                    >
-                      Show Players Below
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          );
-        })}
+            const players = depthCharts[selectedSport]?.[position] || [];
+
+            return (
+              <div key={position} className="border rounded-lg p-4 bg-gray-50">
+                <h3 className="text-xl font-semibold text-gray-700 mb-2">{position}</h3>
+                {players.length > 0 ? (
+                  <ul className="space-y-2">
+                    {players.map((player, index) => (
+                      <PlayerItem
+                        key={player.id}
+                        player={player}
+                        selectedSport={selectedSport}
+                        position={position}
+                        onRemovePlayer={onRemovePlayer}
+                        setSelectedPlayer={setSelectedPlayer}
+                      />
+                    ))}
+                  </ul>
+                ) : (
+                  <button
+                    onClick={() => onAddPlayer(position)}
+                    className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors cursor-pointer"
+                  >
+                    Add Player
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     );
-  }, [depthCharts, onRemovePlayer, selectedPosition, selectedSport]);
+  }, [depthCharts, onRemovePlayer, selectedPosition, selectedSport, sportsConfig, onAddPlayer]);
 
   const FilterComponent = React.memo(() => {
     return (
@@ -96,25 +103,22 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig }) {
         {renderDepthChart()}
       </div>
 
-      {selectedPlayer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-semibold mb-4">Players Below {selectedPlayer.name}</h3>
-            <ul className="space-y-2 mb-4">
-              {getPlayersBelow(selectedPlayer.sport, selectedPlayer.position, selectedPlayer.id)
-                .map(player => (
-                  <li key={player.id} className="p-2 bg-gray-50 rounded">{player.name}</li>
-                ))}
-            </ul>
-            <button
-              onClick={() => setSelectedPlayer(null)}
-              className="w-full px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <Modal
+        isOpen={selectedPlayer !== null}
+        onClose={() => setSelectedPlayer(null)}
+        title={`${selectedPlayer?.name} | Whom below`}
+      >
+        <ul className="space-y-2 mb-4">
+          {selectedPlayer && getPlayersBelow(selectedPlayer.sport, selectedPlayer.position, selectedPlayer.id)
+            .map(player => (
+              <PlayerItem
+                key={player.id}
+                player={player}
+                selectedSport={selectedSport}
+              />
+            ))}
+        </ul>
+      </Modal>
     </div>
   );
 }
