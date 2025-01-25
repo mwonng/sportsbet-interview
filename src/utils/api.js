@@ -26,6 +26,7 @@ export const mockedPlayerAPI = new Promise(resolve =>
       },
       Soccer: {
         'SS': [
+          { id: '22', name: 'Kaka', number: '22', position: 'SS' },
           { id: '4', name: 'Lionel Messi', number: '10', position: 'SS' },
           { id: '5', name: 'Cristiano Ronaldo', number: '7', position: 'SS' }
         ],

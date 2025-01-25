@@ -16,8 +16,6 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }
   });
   const [showWarning, setShowWarning] = useState(false);
 
-  console.log("pc, ", initialPosition, initialSport)
-
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.name || !formData.sport || !formData.position) {
@@ -41,7 +39,7 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 space-y-4 bg-white rounded-lg shadow-md">
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 space-y-4 bg-white rounded-lg shadow-xl">
       {showWarning && (
         <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
           Please fill in all required fields

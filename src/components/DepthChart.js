@@ -52,7 +52,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
           return (
             <div key={sport} className="bg-white rounded-lg shadow-md p-4">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">{sport}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
                 {availablePositions.map(position => {
                   if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
@@ -98,16 +98,16 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
         })}
       </div>
     );
-  }, [selectedSport, sportsConfig, selectedPosition, depthCharts, onAddPlayer, onRemovePlayer, onUpdateDepthChart]);
+  }, [selectedSport, sportsConfig, localCharts, onUpdateDepthChart, selectedPosition, onAddPlayer, onRemovePlayer]);
 
   const FilterComponent = React.memo(() => {
     return (
-      <div className="mb-6 flex gap-4">
-        <div className="relative">
+      <div className="mb-6 flex flex-col sm:flex-row gap-4 justify-center ">
+        <div className="relative w-full sm:w-48">
           <select
             value={selectedSport}
             onChange={(e) => setSelectedSport(e.target.value)}
-            className="appearance-none w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
+            className="appearance-none w-full sm:w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
               font-medium cursor-pointer hover:border-gray-400 focus:outline-none focus:border-blue-500 
               focus:ring-2 focus:ring-blue-200 transition-all duration-200"
           >
@@ -123,11 +123,11 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative w-full sm:w-48">
           <select
             value={selectedPosition}
             onChange={(e) => setSelectedPosition(e.target.value)}
-            className="appearance-none w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
+            className="appearance-none w-full sm:w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
               font-medium cursor-pointer hover:border-gray-400 focus:outline-none focus:border-blue-500 
               focus:ring-2 focus:ring-blue-200 transition-all duration-200"
           >
@@ -139,7 +139,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
             }
           </select>
           <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" preserveAspectRatio="xMidYMid meet">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
             </svg>
           </div>

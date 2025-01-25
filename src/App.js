@@ -3,10 +3,13 @@ import './App.css';
 import DepthChart from './components/DepthChart';
 import PlayerForm from './components/PlayerForm';
 import Modal from './components/Modal';
+import Skeleton from "./components/Skeleton";
 import {
   mockedConfigAPI,
   mockedPlayerAPI
 } from './utils/api'
+
+
 function App() {
   const [depthCharts, setDepthCharts] = useState({
     NFL: {},
@@ -103,13 +106,16 @@ function App() {
   };
 
   if (isLoading) {
-    return <div>Loading sports configuration...</div>;
+    return (<div>
+      <Skeleton count={5} /> {/* Adjust the count or other props as needed */}
+    </div>)
   }
 
   return (
     <div className="App">
-      <h1>Sports Depth Charts</h1>
-      <button
+      <h1 className="text-4xl font-bold text-center text-black-600 my-4">
+        Sports Depth Charts
+      </h1>      <button
         className="add-player-button"
         onClick={() => openAddPlayerModal()}
       >
