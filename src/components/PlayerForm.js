@@ -4,7 +4,7 @@ const defaultValue = {
   name: '',
   sport: '',
   position: '',
-  spot: ''
+  number: ''
 }
 
 function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }) {
@@ -12,7 +12,7 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }
     name: '',
     sport: initialSport || '',
     position: initialPosition || (initialSport ? sportsConfig[initialSport].positions[0] : ''),
-    spot: ''
+    number: ''
   });
   const [showWarning, setShowWarning] = useState(false);
 
@@ -27,14 +27,14 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }
     const player = {
       id: Date.now(), // Simple ID generation
       name: formData.name,
-      spot: formData.spot
+      number: formData.number
     };
 
     onAddPlayer(
       formData.sport,
       formData.position,
       player,
-      formData.spot ? parseInt(formData.spot) : null
+      formData.number ? parseInt(formData.number) : null
     );
 
     setFormData(defaultValue)
@@ -60,8 +60,8 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }
       <div className="space-y-2">
         <input
           type="number"
-          value={formData.spot}
-          onChange={(e) => setFormData({ ...formData, spot: e.target.value })}
+          value={formData.number}
+          onChange={(e) => setFormData({ ...formData, number: e.target.value })}
           placeholder="Number (optional)"
           min="0"
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"

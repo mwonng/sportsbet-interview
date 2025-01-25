@@ -2,21 +2,46 @@ import React, { useState } from 'react';
 import Modal from './Modal';
 import PlayerItem from './PlayerItem'
 
-function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) {
+function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, onUpdateDepthChart }) {
+  const localCharts = structuredClone(depthCharts)
   const [selectedSport, setSelectedSport] = useState('ALL');
   const [selectedPosition, setSelectedPosition] = useState('ALL');
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
   const getPlayersBelow = (sport, position, playerId) => {
-    const positionChart = depthCharts[sport][position] || [];
+    const positionChart = localCharts[sport][position] || [];
     const playerIndex = positionChart.findIndex(p => p.id === playerId);
     return playerIndex >= 0 ? positionChart.slice(playerIndex + 1) : [];
   };
 
   const renderDepthChart = React.useCallback(() => {
+    const movePlayer = (sport, position, currentIndex, direction) => {
+      const newIndex = currentIndex + direction;
+      const positionChart = [...(localCharts[sport][position] || [])];
+
+      if (newIndex >= 0 && newIndex < positionChart.length) {
+        [positionChart[currentIndex], positionChart[newIndex]] =
+          [positionChart[newIndex], positionChart[currentIndex]];
+        onUpdateDepthChart(sport, position, positionChart);
+      }
+    };
+
+    const movePlayerUp = (sport, position, playerId) => {
+      const positionChart = localCharts[sport][position] || [];
+      const currentIndex = positionChart.findIndex(p => p.id === playerId);
+      movePlayer(sport, position, currentIndex, -1);
+    };
+
+    const movePlayerDown = (sport, position, playerId) => {
+      const positionChart = localCharts[sport][position] || [];
+      const currentIndex = positionChart.findIndex(p => p.id === playerId);
+      movePlayer(sport, position, currentIndex, 1);
+    };
+
     const sportsToRender = selectedSport === 'ALL'
       ? Object.keys(sportsConfig)
       : [selectedSport];
+
 
     return (
       <div className="space-y-8">
@@ -31,7 +56,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) 
                 {availablePositions.map(position => {
                   if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
-                  const players = depthCharts[sport]?.[position] || [];
+                  const players = localCharts[sport]?.[position] || [];
 
                   return (
                     <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
@@ -48,7 +73,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) 
                       </div>
                       {players.length > 0 && (
                         <ul className="space-y-2">
-                          {players.map((player) => (
+                          {players.map((player, index) => (
                             <PlayerItem
                               key={player.id}
                               player={player}
@@ -56,6 +81,10 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) 
                               position={position}
                               onRemovePlayer={onRemovePlayer}
                               setSelectedPlayer={setSelectedPlayer}
+                              onMoveUp={() => movePlayerUp(sport, position, player.id)}
+                              onMoveDown={() => movePlayerDown(sport, position, player.id)}
+                              isFirst={index === 0}
+                              isLast={index === players.length - 1}
                             />
                           ))}
                         </ul>
@@ -69,37 +98,55 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) 
         })}
       </div>
     );
-  }, [depthCharts, onRemovePlayer, selectedPosition, selectedSport, sportsConfig, onAddPlayer]);
+  }, [selectedSport, sportsConfig, selectedPosition, depthCharts, onAddPlayer, onRemovePlayer, onUpdateDepthChart]);
 
   const FilterComponent = React.memo(() => {
     return (
       <div className="mb-6 flex gap-4">
-        <select
-          value={selectedSport}
-          onChange={(e) => setSelectedSport(e.target.value)}
-          className="px-4 py-2 border rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="ALL">All Sports</option>
-          {Object.keys(sportsConfig).map(sport => (
-            <option key={sport} value={sport}>{sport}</option>
-          ))}
-        </select>
+        <div className="relative">
+          <select
+            value={selectedSport}
+            onChange={(e) => setSelectedSport(e.target.value)}
+            className="appearance-none w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
+              font-medium cursor-pointer hover:border-gray-400 focus:outline-none focus:border-blue-500 
+              focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+          >
+            <option value="ALL">All Sports</option>
+            {Object.keys(sportsConfig).map(sport => (
+              <option key={sport} value={sport}>{sport}</option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
 
-        <select
-          value={selectedPosition}
-          onChange={(e) => setSelectedPosition(e.target.value)}
-          className="px-4 py-2 border rounded-lg bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="ALL">All Positions</option>
-          {selectedSport !== 'ALL' &&
-            sportsConfig[selectedSport].positions.map(position => (
-              <option key={position} value={position}>{position}</option>
-            ))
-          }
-        </select>
+        <div className="relative">
+          <select
+            value={selectedPosition}
+            onChange={(e) => setSelectedPosition(e.target.value)}
+            className="appearance-none w-48 px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-gray-700 
+              font-medium cursor-pointer hover:border-gray-400 focus:outline-none focus:border-blue-500 
+              focus:ring-2 focus:ring-blue-200 transition-all duration-200"
+          >
+            <option value="ALL">All Positions</option>
+            {selectedSport !== 'ALL' &&
+              sportsConfig[selectedSport].positions.map(position => (
+                <option key={position} value={position}>{position}</option>
+              ))
+            }
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+        </div>
       </div>
     );
-  });
+  }, [sportsConfig]);
 
   return (
     <div className="p-4">

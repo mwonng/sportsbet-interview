@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import DepthChart from './components/DepthChart';
 import PlayerForm from './components/PlayerForm';
-import { SPORTS_CONFIG } from './config/sportsConfig';
 import Modal from './components/Modal';
-
+import {
+  mockedConfigAPI,
+  mockedPlayerAPI
+} from './utils/api'
 function App() {
   const [depthCharts, setDepthCharts] = useState({
     NFL: {},
@@ -13,9 +15,41 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
+  const [sportsConfig, setSportsConfig] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const addPlayer = (sport, position, player, spot = null) => {
-    console.log('addPlayer called at:', new Date().toISOString(), { sport, position, player, spot });
+  const fetchSportsConfig = async () => {
+    try {
+      const [configResponse, chartsResponse] = await Promise.all([
+        mockedConfigAPI,
+        mockedPlayerAPI
+      ]);
+
+      return {
+        config: configResponse,
+        initialData: chartsResponse
+      };
+
+    } catch (error) {
+      console.error('Error fetching sports configuration:', error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const loadSportsConfig = async () => {
+      setIsLoading(true);
+      const mockedAPI = await fetchSportsConfig();
+      setSportsConfig(mockedAPI.config);
+      setDepthCharts(mockedAPI.initialData)
+      setIsLoading(false);
+    };
+
+    loadSportsConfig();
+  }, []);
+
+  const addPlayer = (sport, position, player, number = null) => {
+    console.log('addPlayer called at:', new Date().toISOString(), { sport, position, player, number });
 
     setDepthCharts(prevCharts => {
       console.log("State update at:", new Date().toISOString(), "Previous state:", prevCharts);
@@ -25,7 +59,6 @@ function App() {
         newCharts[sport][position] = [];
       }
 
-      // Check if player already exists in this position
       const playerExists = newCharts[sport][position].some(
         existingPlayer => existingPlayer.id === player.id
       );
@@ -36,11 +69,7 @@ function App() {
 
       const positionChart = [...(newCharts[sport][position] || [])];
 
-      if (spot !== null) {
-        positionChart.splice(spot, 0, player);
-      } else {
-        positionChart.unshift(player);
-      }
+      positionChart.unshift(player);
 
       newCharts[sport][position] = positionChart;
       return newCharts;
@@ -58,11 +87,24 @@ function App() {
   };
 
   const openAddPlayerModal = (position = null, sport = null) => {
-    console.log("position ---", position, sport)
     setSelectedPosition(position);
     setSelectedSport(sport)
     setIsModalOpen(true);
   };
+
+  const handleUpdateDepthChart = (sport, position, updatedPositionChart) => {
+    setDepthCharts({
+      ...depthCharts,
+      [sport]: {
+        ...depthCharts[sport],
+        [position]: updatedPositionChart
+      }
+    });
+  };
+
+  if (isLoading) {
+    return <div>Loading sports configuration...</div>;
+  }
 
   return (
     <div className="App">
@@ -82,11 +124,11 @@ function App() {
         }}
         title={`Add new ${selectedPosition || 'player'}`}>
         <PlayerForm
-          sportsConfig={SPORTS_CONFIG}
+          sportsConfig={sportsConfig}
           initialPosition={selectedPosition}
           initialSport={selectedSport}
-          onAddPlayer={(sport, position, player, spot) => {
-            addPlayer(sport, position, player, spot);
+          onAddPlayer={(sport, position, player, number) => {
+            addPlayer(sport, position, player, number);
             setIsModalOpen(false);
             setSelectedPosition(position);
             setSelectedSport(sport);
@@ -98,7 +140,8 @@ function App() {
         depthCharts={depthCharts}
         onRemovePlayer={removePlayer}
         onAddPlayer={openAddPlayerModal}
-        sportsConfig={SPORTS_CONFIG}
+        sportsConfig={sportsConfig}
+        onUpdateDepthChart={handleUpdateDepthChart}
       />
     </div>
   );
