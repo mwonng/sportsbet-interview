@@ -12,6 +12,7 @@ function App() {
   });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPosition, setSelectedPosition] = useState(null);
+  const [selectedSport, setSelectedSport] = useState(null);
 
   const addPlayer = (sport, position, player, spot = null) => {
     console.log('addPlayer called at:', new Date().toISOString(), { sport, position, player, spot });
@@ -56,9 +57,10 @@ function App() {
     });
   };
 
-  const openAddPlayerModal = (position = null) => {
-    console.log("position ---", position)
+  const openAddPlayerModal = (position = null, sport = null) => {
+    console.log("position ---", position, sport)
     setSelectedPosition(position);
+    setSelectedSport(sport)
     setIsModalOpen(true);
   };
 
@@ -82,10 +84,12 @@ function App() {
         <PlayerForm
           sportsConfig={SPORTS_CONFIG}
           initialPosition={selectedPosition}
+          initialSport={selectedSport}
           onAddPlayer={(sport, position, player, spot) => {
             addPlayer(sport, position, player, spot);
             setIsModalOpen(false);
             setSelectedPosition(position);
+            setSelectedSport(sport);
           }}
         />
       </Modal>

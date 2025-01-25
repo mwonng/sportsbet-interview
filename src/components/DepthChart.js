@@ -14,54 +14,59 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer }) 
   };
 
   const renderDepthChart = React.useCallback(() => {
-    if (selectedSport === 'ALL') {
-      return (
-        <div className="text-center text-gray-600 py-8">
-          Please select a sport to view its depth chart
-        </div>
-      );
-    }
-
-    const availablePositions = sportsConfig[selectedSport].positions;
-    if (!availablePositions) return null;
+    const sportsToRender = selectedSport === 'ALL'
+      ? Object.keys(sportsConfig)
+      : [selectedSport];
 
     return (
-      <div className="bg-white rounded-lg shadow-md p-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">{selectedSport}</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {availablePositions.map(position => {
-            if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
+      <div className="space-y-8">
+        {sportsToRender.map(sport => {
+          const availablePositions = sportsConfig[sport].positions;
+          if (!availablePositions) return null;
 
-            const players = depthCharts[selectedSport]?.[position] || [];
+          return (
+            <div key={sport} className="bg-white rounded-lg shadow-md p-4">
+              <h2 className="text-2xl font-bold text-gray-800 mb-4">{sport}</h2>
+              <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {availablePositions.map(position => {
+                  if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
-            return (
-              <div key={position} className="border rounded-lg p-4 bg-gray-50">
-                <h3 className="text-xl font-semibold text-gray-700 mb-2">{position}</h3>
-                {players.length > 0 ? (
-                  <ul className="space-y-2">
-                    {players.map((player, index) => (
-                      <PlayerItem
-                        key={player.id}
-                        player={player}
-                        selectedSport={selectedSport}
-                        position={position}
-                        onRemovePlayer={onRemovePlayer}
-                        setSelectedPlayer={setSelectedPlayer}
-                      />
-                    ))}
-                  </ul>
-                ) : (
-                  <button
-                    onClick={() => onAddPlayer(position)}
-                    className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors cursor-pointer"
-                  >
-                    Add Player
-                  </button>
-                )}
+                  const players = depthCharts[sport]?.[position] || [];
+
+                  return (
+                    <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                      <div className="flex justify-between items-center mb-2">
+                        <h3 className="text-xl font-semibold text-gray-700">{position}</h3>
+                        <button
+                          onClick={() => onAddPlayer(position, sport)}
+                          className="p-1 text-green-500 hover:text-green-600 transition-colors cursor-pointer"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                          </svg>
+                        </button>
+                      </div>
+                      {players.length > 0 && (
+                        <ul className="space-y-2">
+                          {players.map((player) => (
+                            <PlayerItem
+                              key={player.id}
+                              player={player}
+                              selectedSport={sport}
+                              position={position}
+                              onRemovePlayer={onRemovePlayer}
+                              setSelectedPlayer={setSelectedPlayer}
+                            />
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
       </div>
     );
   }, [depthCharts, onRemovePlayer, selectedPosition, selectedSport, sportsConfig, onAddPlayer]);

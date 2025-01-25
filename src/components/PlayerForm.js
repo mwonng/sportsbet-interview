@@ -2,23 +2,28 @@ import React, { useState } from 'react';
 
 const defaultValue = {
   name: '',
-  sport: 'NFL',
-  position: 'QB',
+  sport: '',
+  position: '',
   spot: ''
 }
 
-function PlayerForm({ sportsConfig, onAddPlayer, initialPosition }) {
+function PlayerForm({ sportsConfig, onAddPlayer, initialPosition, initialSport }) {
   const [formData, setFormData] = useState({
     name: '',
-    sport: 'NFL',
-    position: initialPosition || 'QB',
+    sport: initialSport || '',
+    position: initialPosition || (initialSport ? sportsConfig[initialSport].positions[0] : ''),
     spot: ''
   });
+  const [showWarning, setShowWarning] = useState(false);
 
-  console.log("pc, ", initialPosition)
+  console.log("pc, ", initialPosition, initialSport)
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!formData.name || !formData.sport || !formData.position) {
+      setShowWarning(true);
+      return;
+    }
     const player = {
       id: Date.now(), // Simple ID generation
       name: formData.name,
@@ -37,6 +42,11 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition }) {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto p-6 space-y-4 bg-white rounded-lg shadow-md">
+      {showWarning && (
+        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+          Please fill in all required fields
+        </div>
+      )}
       <div className="space-y-2">
         <input
           type="text"
@@ -59,14 +69,16 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition }) {
       </div>
       <div className="space-y-2">
         <select
+          required
           value={formData.sport}
           onChange={(e) => setFormData({
             ...formData,
             sport: e.target.value,
-            position: sportsConfig[e.target.value].positions[0]
+            position: e.target.value ? sportsConfig[e.target.value].positions[0] : ''
           })}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
         >
+          <option value="">Please select</option>
           {Object.keys(sportsConfig).map(sport => (
             <option key={sport} value={sport}>{sport}</option>
           ))}
@@ -74,11 +86,13 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition }) {
       </div>
       <div className="space-y-2">
         <select
+          required
           value={formData.position}
           onChange={(e) => setFormData({ ...formData, position: e.target.value })}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
         >
-          {sportsConfig[formData.sport].positions.map(position => (
+          <option value="">Select...</option>
+          {formData.sport && sportsConfig[formData.sport].positions.map(position => (
             <option key={position} value={position}>{position}</option>
           ))}
         </select>
@@ -86,7 +100,7 @@ function PlayerForm({ sportsConfig, onAddPlayer, initialPosition }) {
 
       <button
         type="submit"
-        className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+        className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors cursor-pointer"
       >
         Add Player
       </button>
