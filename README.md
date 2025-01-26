@@ -7,23 +7,22 @@ This project is designed to create a depth chart for sports teams. It is built u
 Make sure you have node and npm installed, or yarn.
 
 ```sh
-$ npm install & npm start
+$ npm install && npm start
 # or 
-$ yarn & yarn start
+$ yarn && yarn start
 ```
 
 after local dev server run, you can now go to http://localhost:3000/
 
-## Features implemented
-- **Add player from position box:** Add player by auto fill sport and position.
-- **Move up and down:** Able to move up and down by button.
-- **Filter:** Filter on top to filter sport/sport.
-- **Show player's backup:** Show player's backup.
-- **Fetch config and data:** Mock a fetch action to load sport config and data from API.
+## Features Implemented
+- **Add Player from Position Box:** Allows adding a player by automatically filling in the sport and position.
+- **Move Up and Down:** Players can be moved up and down using buttons.
+- **Filter:** Provides a filter at the top to filter by sport or position.
+- **Show Player's Backup:** Displays the backup for each player.
+- **Fetch Config and Data:** Mocks a fetch action to load sport configuration and data from an API.
 
-
-## Assumption and constrain
-- **Test concern:** As this is project are purely UI demostrate purose and mainly UI focus, test coverage is not guaranteed.
-- **Architecture:** Less is more, I try to use minimised 3rd party library, for style, I use tailwind as convenience. This can be used Context or state manager to manage the sport config and data, considering this app scope, I personally think this is necessary. so i just native react state for simplify.
-- **Player profile:** Not fully implement a player profile, which can be improved to show detail of player info if user click to view the player information.
-  
+## Assumptions and Constraints
+- **Testing Concerns:** As this project is primarily for UI demonstration purposes and focuses mainly on the UI, test coverage is not guaranteed.
+- **Architecture:** The project follows a minimalist approach by using a minimal number of third-party libraries. Tailwind CSS is used for styling due to its convenience. While context or state management could be used to manage sport configuration and data, given the scope of this app, I believe it is unnecessary. Therefore, native React state is used for simplicity.
+- **Player Profile:** A full player profile is not implemented. This can be enhanced to show detailed player information when a user clicks to view player details.
+- **Layout:** There is no specific layout design implemented. Different methods, such as flex or grid, can be used depending on how the content should be displayed, with a focus on responsive design.
