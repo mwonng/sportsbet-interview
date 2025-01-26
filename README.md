@@ -1,70 +1,29 @@
-# Getting Started with Create React App
+## Summary
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is designed to create a depth chart for sports teams. It is built using Create React App, with minimal dependencies to keep it lightweight and efficient. For styling, Tailwind CSS is utilized, and SVG icons are incorporated for visual elements.
 
-## Available Scripts
+## How to
 
-In the project directory, you can run:
+Make sure you have node and npm installed, or yarn.
 
-### `npm start`
+```sh
+$ npm install & npm start
+# or 
+$ yarn & yarn start
+```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+after local dev server run, you can now go to http://localhost:3000/
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Features implemented
+- **Add player from position box:** Add player by auto fill sport and position.
+- **Move up and down:** Able to move up and down by button.
+- **Filter:** Filter on top to filter sport/sport.
+- **Show player's backup:** Show player's backup.
+- **Fetch config and data:** Mock a fetch action to load sport config and data from API.
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Assumption and constrain
+- **Test concern:** As this is project are purely UI demostrate purose and mainly UI focus, test coverage is not guaranteed.
+- **Architecture:** Less is more, I try to use minimised 3rd party library, for style, I use tailwind as convenience. This can be used Context or state manager to manage the sport config and data, considering this app scope, I personally think this is necessary. so i just native react state for simplify.
+- **Player profile:** Not fully implement a player profile, which can be improved to show detail of player info if user click to view the player information.
+  
