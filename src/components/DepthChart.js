@@ -1,65 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Modal from './Modal';
 import PlayerItem from './PlayerItem'
-
-const SportDepthChart = ({ sport, availablePositions, selectedPosition, localCharts, onAddPlayer, onRemovePlayer, setSelectedPlayer, movePlayerUp, movePlayerDown }) => {
-
-  return (
-    <div key={sport} className="bg-white rounded-lg p-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">{sport}</h2>
-      <div className="flex flex-wrap gap-x-4 gap-y-4">
-        {availablePositions.map(position => {
-          if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
-
-          const players = localCharts[sport]?.[position] || [];
-
-          return (
-            <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-w-[250px]">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-semibold text-gray-700">{position}</h3>
-                <button
-                  onClick={() => onAddPlayer(position, sport)}
-                  className="p-1 text-green-500 hover:text-green-600 transition-colors cursor-pointer"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                </button>
-              </div>
-              {players.length > 0 && (
-                <ul className="space-y-2">
-                  {players.map((player, index) => (
-                    <PlayerItem
-                      key={player.id}
-                      player={player}
-                      selectedSport={sport}
-                      position={position}
-                      onRemovePlayer={onRemovePlayer}
-                      setSelectedPlayer={setSelectedPlayer}
-                      onMoveUp={() => movePlayerUp(sport, position, player.id)}
-                      onMoveDown={() => movePlayerDown(sport, position, player.id)}
-                      isFirst={index === 0}
-                      isLast={index === players.length - 1}
-                    />
-                  ))}
-                </ul>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  )
-}
+import { useSelection } from "../context/SelectionContext";
 
 function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, onUpdateDepthChart }) {
-  const localCharts = structuredClone(depthCharts)
-  const [selectedSport, setSelectedSport] = useState('ALL');
-  const [selectedPosition, setSelectedPosition] = useState('ALL');
-  const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const {
+    selectedSport,
+    setSelectedSport,
+    selectedPosition,
+    setSelectedPosition,
+    selectedPlayer,
+    setSelectedPlayer
+  } = useSelection();
 
   const getPlayersBelow = (sport, position, playerId) => {
-    const positionChart = localCharts[sport][position] || [];
+    const positionChart = depthCharts[sport][position] || [];
     const playerIndex = positionChart.findIndex(p => p.id === playerId);
     return playerIndex >= 0 ? positionChart.slice(playerIndex + 1) : [];
   };
@@ -67,7 +22,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
   const renderDepthChart = React.useCallback(() => {
     const movePlayer = (sport, position, currentIndex, direction) => {
       const newIndex = currentIndex + direction;
-      const positionChart = [...(localCharts[sport][position] || [])];
+      const positionChart = [...(depthCharts[sport][position] || [])];
 
       if (newIndex >= 0 && newIndex < positionChart.length) {
         [positionChart[currentIndex], positionChart[newIndex]] =
@@ -77,13 +32,13 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
     };
 
     const movePlayerUp = (sport, position, playerId) => {
-      const positionChart = localCharts[sport][position] || [];
+      const positionChart = depthCharts[sport][position] || [];
       const currentIndex = positionChart.findIndex(p => p.id === playerId);
       movePlayer(sport, position, currentIndex, -1);
     };
 
     const movePlayerDown = (sport, position, playerId) => {
-      const positionChart = localCharts[sport][position] || [];
+      const positionChart = depthCharts[sport][position] || [];
       const currentIndex = positionChart.findIndex(p => p.id === playerId);
       movePlayer(sport, position, currentIndex, 1);
     };
@@ -106,7 +61,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
                 {availablePositions.map(position => {
                   if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
-                  const players = localCharts[sport]?.[position] || [];
+                  const players = depthCharts[sport]?.[position] || [];
 
                   return (
                     <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-w-[250px]">
@@ -148,7 +103,7 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
         })}
       </div>
     );
-  }, [selectedSport, sportsConfig, localCharts, onUpdateDepthChart, selectedPosition, onAddPlayer, onRemovePlayer]);
+  }, [selectedSport, sportsConfig, depthCharts, onUpdateDepthChart, selectedPosition, onAddPlayer, onRemovePlayer, setSelectedPlayer]);
 
   const FilterComponent = React.memo(() => {
     return (

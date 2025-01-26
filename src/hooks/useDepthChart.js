@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import { mockedConfigAPI, mockedPlayerAPI } from '../utils/api';
+import { useSelection } from "../context/SelectionContext";
 
 function useDepthChart() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const {
+    selectedSport,
+    setSelectedSport,
+    selectedPosition,
+    setSelectedPosition,
+  } = useSelection();
 
   const [depthCharts, setDepthCharts] = useState({
     NFL: {},
     Soccer: {}
   });
-  const [selectedPosition, setSelectedPosition] = useState(null);
-  const [selectedSport, setSelectedSport] = useState(null);
+
   const [sportsConfig, setSportsConfig] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 

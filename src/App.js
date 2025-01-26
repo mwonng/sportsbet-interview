@@ -9,22 +9,18 @@ import useDepthChart from "./hooks/useDepthChart";
 function App() {
   const {
     depthCharts,
-    selectedPosition,
-    selectedSport,
     sportsConfig,
     isLoading,
     addPlayer,
     removePlayer,
     isModalOpen,
-    setSelectedSport,
-    setSelectedPosition,
     setIsModalOpen,
     handleUpdateDepthChart
   } = useDepthChart();
+  const [initForm, setInitForm] = React.useState({ sport: null, position: null })
 
   const openAddPlayerModal = (position = null, sport = null) => {
-    setSelectedPosition(position);
-    setSelectedSport(sport);
+    setInitForm({ sport: sport, position: position });
     setIsModalOpen(true);
   };
 
@@ -50,22 +46,18 @@ function App() {
         isOpen={isModalOpen}
         onClose={() => {
           setIsModalOpen(false);
-          setSelectedPosition(null);
         }}
-        title={`Add new ${selectedPosition || 'player'}`}>
+        title={`Add new ${initForm.position || 'player'}`}>
         <PlayerForm
           sportsConfig={sportsConfig}
-          initialPosition={selectedPosition}
-          initialSport={selectedSport}
+          initialPosition={initForm.position}
+          initialSport={initForm.sport}
           onAddPlayer={(sport, position, player, number) => {
             addPlayer(sport, position, player, number);
             setIsModalOpen(false);
-            setSelectedPosition(position);
-            setSelectedSport(sport);
           }}
         />
       </Modal>
-
       <DepthChart
         depthCharts={depthCharts}
         onRemovePlayer={removePlayer}

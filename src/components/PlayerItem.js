@@ -12,6 +12,7 @@ function PlayerItem({
   isFirst,
   isLast
 }) {
+
   return (
     <li key={player.id} className="flex flex-col lg:flex-row items-start lg:items-center justify-between bg-white p-3 rounded-md group border border-gray-300 gap-4">
       <div className="flex items-center gap-3 mb-2 md:mb-0">
