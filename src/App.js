@@ -112,7 +112,7 @@ function App() {
   }
 
   return (
-    <div className="App">
+    <div className="App container mx-auto px-4">
       <h1 className="text-4xl font-bold text-center text-black-600 my-4">
         Sports Depth Charts
       </h1>      <button

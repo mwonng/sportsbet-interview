@@ -13,12 +13,12 @@ function PlayerItem({
   isLast
 }) {
   return (
-    <li key={player.id} className="flex items-center justify-between bg-white p-3 rounded-md group border border-gray-300">
-      <div className="flex items-center gap-3">
+    <li key={player.id} className="flex flex-col lg:flex-row items-start lg:items-center justify-between bg-white p-3 rounded-md group border border-gray-300 gap-4">
+      <div className="flex items-center gap-3 mb-2 md:mb-0">
         <span className="w-8 text-center text-gray-500">{player.number}</span>
         <span className="font-medium">{player.name}</span>
       </div>
-      <div className="flex items-center gap-2 invisible group-hover:visible">
+      <div className="flex items-center gap-2 invisible group-hover:visible pb-2 lg:pb-0">
         {position && !isFirst && onMoveUp && (
           <button
             onClick={onMoveUp}

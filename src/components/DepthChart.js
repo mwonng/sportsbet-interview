@@ -50,16 +50,16 @@ function DepthChart({ depthCharts, onRemovePlayer, sportsConfig, onAddPlayer, on
           if (!availablePositions) return null;
 
           return (
-            <div key={sport} className="bg-white rounded-lg shadow-md p-4">
+            <div key={sport} className="bg-white rounded-lg p-4">
               <h2 className="text-2xl font-bold text-gray-800 mb-4">{sport}</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              <div className="flex flex-wrap gap-x-4 gap-y-4">
                 {availablePositions.map(position => {
                   if (selectedPosition !== 'ALL' && position !== selectedPosition) return null;
 
                   const players = localCharts[sport]?.[position] || [];
 
                   return (
-                    <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                    <div key={position} className="border border-gray-200 rounded-lg p-4 bg-gray-50 min-w-[250px]">
                       <div className="flex justify-between items-center mb-2">
                         <h3 className="text-xl font-semibold text-gray-700">{position}</h3>
                         <button
